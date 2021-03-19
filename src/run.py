@@ -91,7 +91,7 @@ def scrape_transactions(links, collection, timeout):
         
         # Collect all transactions from a price guide
         while True:
-            sleep(timeout)
+            sleep(1)
             soup = hot_soup()
             transactions = soup.find_all('tr', class_='transaction')
 
@@ -128,12 +128,12 @@ def scrape_transactions(links, collection, timeout):
     print(f'{count} transactions scraped from {guide} guides.\n')
 
 def main():
-    timeout = 1.5
+    timeout = 2
     driver.get('https://reverb.com/price-guide/electric-guitars')
 
     print('Logging in...\n')
     login()
-    sleep(1)
+    sleep(timeout)
 
     scrape_links(link_coll, timeout)
 
