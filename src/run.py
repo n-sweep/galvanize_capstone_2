@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
 driver = Crawler()
-client = MongoClient('192.168.0.209', 27017)
+client = MongoClient('192.168.0.211', 27017)
 db = client['reverb']
 link_coll = db['links']
 data_coll = db['data']
@@ -136,8 +136,9 @@ def main():
 
 #    scrape_links(link_coll, timeout)
 
-    links = link_coll.find({}, {'_id':0})
+    links = link_coll.find({}, {'_id':0}, no_cursor_timeout=True)
     scrape_transactions(links, data_coll, timeout)
+    links.close()
 
     print('Scraping Complete.')
 
