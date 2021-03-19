@@ -1,6 +1,5 @@
 import os
 import json
-import psycopg2 as pg2
 from time import sleep
 from crawler import Crawler
 from bs4 import BeautifulSoup
@@ -73,6 +72,7 @@ def scrape_links(collection, timeout):
         nxt = soup.find('li', class_='pagination__page pagination__page--next')
         if nxt:
             # Click next button
+            page += 1
             driver.bsel(nxt).click()
             sleep(timeout)
         else:
@@ -139,7 +139,7 @@ def main():
 
     links = link_coll.find({}, {'_id':0})
     scrape_transactions(links, data_coll, timeout)
-    
+
     print('Scraping Complete.')
 
 if __name__ == "__main__":
