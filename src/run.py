@@ -128,7 +128,7 @@ def scrape_transactions(links, collection, timeout):
     print(f'{count} transactions scraped from {guide} guides.\n')
 
 def main():
-    timeout = 1
+    timeout = 1.5
     driver.get('https://reverb.com/price-guide/electric-guitars')
 
     print('Logging in...\n')
