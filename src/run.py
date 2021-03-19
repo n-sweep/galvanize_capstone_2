@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from pymongo import MongoClient
 
 driver = Crawler()
-client = MongoClient('localhost', 27017)
+client = MongoClient('192.168.0.209', 27017)
 db = client['reverb']
 link_coll = db['links']
 data_coll = db['data']
@@ -85,7 +85,7 @@ def scrape_transactions(links, collection, timeout):
     for document in links:
         title = document['title']
         link = document['link']
-        transaction_agg = []
+        transaction_count = 0
 
         driver.get(link)
         
@@ -100,7 +100,13 @@ def scrape_transactions(links, collection, timeout):
                     date = transaction.find(class_='date').text
                     cond = transaction.find(class_='condition').text
                     price = transaction.find(class_='final').text
-                    transaction_agg.append((date, cond, price))
+                    collection.insert_one({
+                        'title': title,
+                        'date': date,
+                        'cond': cond,
+                        'price': price
+                    })
+                    transaction_count += 1
             else:
                 # There are no transactions in this price guide.
                 print(f'{title} has no transactions.\n')
@@ -108,17 +114,10 @@ def scrape_transactions(links, collection, timeout):
 
             nxt = soup.find('button', attrs={'title': 'Next'})
 
-            if 'disabled' in nxt.attrs:
-                # All transactions have been collected
-                collection.insert_one({
-                    'title': title,
-                    'transactions': transaction_agg
-                })
-                
-                t = len(transaction_agg)
-                count += t
+            if not nxt or 'disabled' in nxt.attrs:
+                # All transactions have been collected                              
                 guide += 1
-                print(f'{t} transactions recorded for {title}.\n')
+                print(f'{transaction_count} transactions recorded for {title}.\n')
                 break
                 
             else:
@@ -135,7 +134,7 @@ def main():
     login()
     sleep(timeout)
 
-    scrape_links(link_coll, timeout)
+#    scrape_links(link_coll, timeout)
 
     links = link_coll.find({}, {'_id':0})
     scrape_transactions(links, data_coll, timeout)
