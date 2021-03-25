@@ -13,17 +13,42 @@ data_coll = db['data']
 
 
 brands = [
+    'Teisco',
+    'Travis',
+    'Kramer',
+    'Music Man',
+    'Norma',
+    'Martin',
+    'National',
+    'Taylor',
+    'Airline',
     'Gibson',
+    'G&L',
+    'Harmony',
+    'Danelectro',
     'Fender',
     'Rickenbacker',
     'Ibanez',
+    'Hagstrom',
+    'Mosrite',
     'Epiphone',
     'Gretsch',
     'Paul Reed Smith',
     'Reverend',
+    'Silvertone',
     'Schecter',
-    'Guild'
+    'Guild',
+    'Supro',
+    'BC Rich',
+    'B.C. Rich',
+    'ESP',
+    'Ibanez',
+    'Jackson',
+    'Yamaha',
+    'Framus',
+    'Ovation'
 ]
+
 
 def hot_soup():
     """Return a beautiful soup object from the driver's current source"""
@@ -117,6 +142,7 @@ def scrape_transactions(links, collection, timeout):
             if not nxt or 'disabled' in nxt.attrs:
                 # All transactions have been collected                              
                 guide += 1
+                count += transaction_count
                 print(f'{transaction_count} transactions recorded for {title}.\n')
                 break
                 

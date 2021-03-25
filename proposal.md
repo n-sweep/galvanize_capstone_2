@@ -1,16 +1,18 @@
 # Galvanize Capstone Proposal #2
 
-1. MTG Competitive Prediction
-    1. To build on top of my first Capstone project, I will widen the scope of my tournament result data. In this project I will inspect distributions of card choices, as well as ratios of card types and converted mana costs among deck sub- and super-types.
-    2. Can deck statistics such as land/spell ratios, card choices, average converted mana cost and mana curve predict the winner of a game?
+1. Used Guitar Price Predictor
+    1. Used instruments are the lifeblood of small music retailers. Even titans like Guitar Center and Sweetwater gladly engage in the thriving used guitar market. During my years in music retail, I cumulatively spent many hours researching used instruments - especially guitars - for customers to ensure that I could offer a fair price and, if purchased, ask a fair price for an instrument once it was put on display. A tool to help make this process a bit faster would have been great!   
+    For this project I will use sale price data scraped from Reverb.com's [electric guitar price guide](https://reverb.com/price-guide/electric-guitars) to build a predictive model.
+    2. Can we predict the value of a used guitar based on its brand, model, color and year of manufacture?
     3. Data source(s):
-     - [mtgtop8.com](https://www.mtgtop8.com)
-     - [magicthegathering.io](https://magicthegathering.io)
-     - [tappedout.net](https://tappedout.net)
-     - [mtgdecks.com](https://mtgdecks.com)
+        - [reverb.com](https://reverb.com)
+
 &nbsp;
-2. Age of Analysis II
-    1. `Age of Empires II` is a real-time strategy PC game developed and released by Microsoft in 1999 which still enjoys popularity today. So much so, in fact, that recent years have seen large international tournaments sonsored by names such as Red Bull, and even a remaster & brand new content from Microsoft. In this project I will inspect players' statistics such as competitive ratings, win/loss ratios and streaks to predict the winner of a given matchup.
-    2. Can player statistics predict the best civilazation (team) choice to beat a given opponent?
+
+2. MTG CV Color Prediction
+    1. For many players, the most iconic part of a card, famous, infamous or just a personal favorite, is the card's artwork. *Magic*'s  publisher hires talented artists to paint stunning landscapes, horrible monsters and valiant heros for each new card it prints. It's even common for players and collectors to have their favorite cards autographed by the artist who helped create the card.  
+    Many aspects of a card are used as inspiration by an artist to create an appropriate work, such as the color of the card. The game of *Magic* has five colors among its cards (somewhat analogous to playing card suits), and these colors typically follow some loose themes. Green often has artwork of forests, elves and beasts. A red card's art might include mountains, dragons and fire.   
+    For this project I will use image data from Scryfall.com's [image API](https://scryfall.com/docs/api/images) to build a predictive model.
+    2. Can a card's color be predicted by the piece of art that was made for the card?
     3. Data source(s):
-     - [AoE2.net](http://aoe2.net)
+        - [scryfall.com](https://scryfall.com)
