@@ -1,9 +1,14 @@
 import os
 import json
+from tqdm import tqdm
 from time import sleep
-from crawler import Crawler
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
+
+try:
+    from crawler import Crawler
+except:
+    from src.crawler import Crawler
 
 driver = Crawler()
 client = MongoClient('192.168.0.211', 27017)
@@ -50,9 +55,10 @@ brands = [
 ]
 
 
-def hot_soup():
+def hot_soup(html=None):
     """Return a beautiful soup object from the driver's current source"""
-    return BeautifulSoup(driver.page_source, 'html.parser')
+    html = html if html else driver.page_source
+    return BeautifulSoup(html, 'html.parser')
 
 def login():
     """Login to Reverb.com"""
@@ -104,7 +110,7 @@ def scrape_links(collection, timeout):
             # All links have been gathered
             break
 
-def scrape_transactions(links, collection, timeout):
+def scrape_transactions(links, collection):
     guide = 0
     count = 0
     for document in links:
@@ -152,18 +158,26 @@ def scrape_transactions(links, collection, timeout):
     
     print(f'{count} transactions scraped from {guide} guides.\n')
 
+def scrape_pages(links, collection, timeout):
+    for link in tqdm(links, ascii=True):
+        driver.get(link)
+        sleep(timeout)
+        html = driver.page_source
+        link_coll.update_one({'link': link}, {'$set': {'html': html}})
+
 def main():
-    timeout = 2
+    timeout = 1
     driver.get('https://reverb.com/price-guide/electric-guitars')
 
     print('Logging in...\n')
     login()
     sleep(timeout)
 
-#    scrape_links(link_coll, timeout)
-
-    links = link_coll.find({}, {'_id':0}, no_cursor_timeout=True)
-    scrape_transactions(links, data_coll, timeout)
+    # links = link_coll.find({}, {'_id':0}, no_cursor_timeout=True)
+    links = data_coll.distinct('link')
+    # scrape_links(link_coll, timeout)
+    # scrape_transactions(links, data_coll)
+    scrape_pages(links, link_coll, timeout)
     links.close()
 
     print('Scraping Complete.')
