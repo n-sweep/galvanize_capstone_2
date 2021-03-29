@@ -1,4 +1,5 @@
 import os
+import re
 import json
 from tqdm import tqdm
 from time import sleep
@@ -14,8 +15,8 @@ driver = Crawler()
 client = MongoClient('192.168.0.211', 27017)
 db = client['reverb']
 link_coll = db['links']
+sales_coll = db['sales']
 data_coll = db['data']
-
 
 brands = [
     'Teisco',
@@ -54,6 +55,10 @@ brands = [
     'Ovation'
 ]
 
+
+def price_to_float(price):
+    f = float(price[1:].replace(',', ''))
+    return round(f, 2)
 
 def hot_soup(html=None):
     """Return a beautiful soup object from the driver's current source"""
@@ -135,7 +140,7 @@ def scrape_transactions(links, collection):
                         'title': title,
                         'date': date,
                         'cond': cond,
-                        'price': price
+                        'price': price_to_float(price)
                     })
                     transaction_count += 1
             else:
@@ -165,7 +170,25 @@ def scrape_pages(links, collection, timeout):
         html = driver.page_source
         link_coll.update_one({'link': link}, {'$set': {'html': html}})
 
-def main():
+def parse_title(title):
+    # This works in a jupyter notebook but fails running this script???
+    regex = r")(?:(?:(.+)((?:Early|Mid|Late)-?\s?'?\d+s|" \
+            r"\d{4}\s?-\s?\d{4})(.*))|" \
+            r"(?:(.+)(\d{4}s?)(.*))|" \
+            r"(?:(.+)(\d{2}s?)(.*)))$"
+    regex = r"(" + '|'.join(brands) + regex
+    groups = re.match(regex, title, re.IGNORECASE).groups()
+    feats = [g.strip() if g else None for g in groups if g is not None]
+
+    return {k: feats[i] for i, k in enumerate(['Brand', 'Model', 'Year', 'Color'])}
+
+def commit_titles_data(documents, collection):
+    for doc in documents:
+        data = parse_title(doc['title'])
+        doc.update(data)
+        #data_coll.insert_one(doc)
+
+def scrape():
     timeout = 1
     driver.get('https://reverb.com/price-guide/electric-guitars')
 
@@ -173,14 +196,20 @@ def main():
     login()
     sleep(timeout)
 
-    # links = link_coll.find({}, {'_id':0}, no_cursor_timeout=True)
-    links = data_coll.distinct('link')
     # scrape_links(link_coll, timeout)
+
+    # links = link_coll.find({}, {'_id':0}, no_cursor_timeout=True)
     # scrape_transactions(links, data_coll)
-    scrape_pages(links, link_coll, timeout)
-    links.close()
+
+    # scrape_pages(link_coll.distinct('link'), link_coll, timeout)
+    # links.close()
 
     print('Scraping Complete.')
+
+def main():
+    docs = link_coll.find({'html': {'$exists': True}}, {'_id': 0, 'html': 0, 'link': 0})
+    commit_titles_data(docs, data_coll)
+
 
 if __name__ == "__main__":
     try:
