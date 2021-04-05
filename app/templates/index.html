@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8' />
+    <title>Used Guitar Value Predictor</title>
+</head>
+<body>
+    <img src='static/ltpbdlnvvmptvp9gnntu.jpg' width='500' />
+    <h1>Used Guitar Value Predictor</h1>
+    <p>
+        Based on data scraped from Reverb.com's price guides.
+    </p>
+    <h2>Input Some Stuff Here</h2>
+    <form action='/prediction' method='POST'>
+        Make: <input type='text' name='make' />
+        <br />
+        Model: <input type='text' name='model' />
+        <br />
+        Year: <input type='text' name='year' />
+        <br />
+        Color: <input type='text' name='color' />
+        <br />
+        <input type=submit value='Submit' />
+    </form>
+</body>
+</html>
